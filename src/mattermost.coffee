@@ -30,11 +30,13 @@ class Mattermost extends Adapter
         'mrkdwn_in': ['text', 'pretext']
       })
       data = JSON.stringify({
-        icon_url: @icon,
-        channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
-        username: @username,
-        text: "",
-        attachments: attachments
+        payload:{
+          icon_url: @icon,
+          channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
+          username: @username,
+          text: "",
+          attachments: attachments
+        }
       })
       @robot.http(@url)
         .header('Content-Type', 'application/json')
