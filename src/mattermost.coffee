@@ -20,7 +20,7 @@ class Mattermost extends Adapter
   #         if err
   #           console.log err
 
-  send: (envelope, title, color, strings...) ->
+  send: (envelope, strings..., title, color) ->
     for str in strings
       attachments = JSON.stringify([{
         'fallback': title,
