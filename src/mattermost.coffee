@@ -22,13 +22,13 @@ class Mattermost extends Adapter
 
   send: (envelope, strings...) ->
     for str in strings
-      attachments = JSON.stringify([{
+      attachments = JSON.stringify({
         'fallback': "",
         'title': "",
         'text': str,
         'color': "#439FE0",
         'mrkdwn_in': ['text', 'pretext']
-      }])
+      })
       data = JSON.stringify({
         icon_url: @icon,
         channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
