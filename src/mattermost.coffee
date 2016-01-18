@@ -27,13 +27,13 @@ class Mattermost extends Adapter
         channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
         username: @username,
         text: "",
-        attachments: {
-          'fallback': "",
-          'title': "",
-          'text': str,
-          'color': "#439FE0",
-          'mrkdwn_in': ['text', 'pretext']
-        }
+        attachments: [{
+          fallback: "",
+          title: "",
+          text: str,
+          color: "#439FE0",
+          mrkdwn_in: ['text', 'pretext']
+        }]
       })
       @robot.http(@url)
         .header('Content-Type', 'application/json')
