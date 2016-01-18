@@ -6,21 +6,21 @@ catch
 
 class Mattermost extends Adapter
 
-  send: (envelope, strings...) ->
-    for str in strings
-      data = JSON.stringify({
-        icon_url: @icon,
-        channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
-        username: @username,
-        text: str
-      })
-      @robot.http(@url)
-        .header('Content-Type', 'application/json')
-        .post(data) (err, res, body) ->
-          if err
-            console.log err
+  # send: (envelope, strings...) ->
+  #   for str in strings
+  #     data = JSON.stringify({
+  #       icon_url: @icon,
+  #       channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
+  #       username: @username,
+  #       text: str
+  #     })
+  #     @robot.http(@url)
+  #       .header('Content-Type', 'application/json')
+  #       .post(data) (err, res, body) ->
+  #         if err
+  #           console.log err
 
-  msg: (envelope, title, color, strings...) ->
+  send: (envelope, title, color, strings...) ->
     for str in strings
       attachments = JSON.stringify([{
         'fallback': title,
@@ -44,15 +44,15 @@ class Mattermost extends Adapter
 
   info: (envelope, strings...) ->
     for str in strings
-      @msg envelope, "", "#439FE0", str
+      @send envelope, "", "#439FE0", str
 
   error: (envelope, strings...) ->
     for str in strings
-      @msg envelope, "Oups, something bad happened...", "danger", str
+      @send envelope, "Oups, something bad happened...", "danger", str
 
   success: (envelope, strings...) ->
     for str in strings
-      @msg envelope, "", "good", str
+      @send envelope, "", "good", str
 
   reply: (envelope, strings...) ->
     for str in strings
