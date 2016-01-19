@@ -49,7 +49,7 @@ class Mattermost extends Adapter
     @icon = process.env.MATTERMOST_ICON_URL
     @username = process.env.MATTERMOST_HUBOT_USERNAME
     @selfsigned = this.getBool(process.env.MATTERMOST_SELFSIGNED_CERT) if process.env.MATTERMOST_SELFSIGNED_CERT
-    @send_msg: (envelope, title, color, strings...) ->
+    @send_msg = (envelope, title, color, strings...) ->
       for str in strings
         data = JSON.stringify({
           icon_url: @icon,
