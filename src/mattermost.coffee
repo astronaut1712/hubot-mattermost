@@ -6,34 +6,13 @@ catch
 
 class Mattermost extends Adapter
 
-  # send: (envelope, strings...) ->
-  #   for str in strings
-  #     data = JSON.stringify({
-  #       icon_url: @icon,
-  #       channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
-  #       username: @username,
-  #       text: str
-  #     })
-  #     @robot.http(@url)
-  #       .header('Content-Type', 'application/json')
-  #       .post(data) (err, res, body) ->
-  #         if err
-  #           console.log err
-
   send: (envelope, strings...) ->
     for str in strings
       data = JSON.stringify({
         icon_url: @icon,
         channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
         username: @username,
-        text: "",
-        attachments: [{
-          fallback: "",
-          title: "",
-          text: str,
-          color: "#439FE0",
-          mrkdwn_in: ['text', 'pretext']
-        }]
+        text: str
       })
       @robot.http(@url)
         .header('Content-Type', 'application/json')
@@ -43,15 +22,15 @@ class Mattermost extends Adapter
 
   info: (envelope, strings...) ->
     for str in strings
-      @send envelope, "", "#439FE0", str
+      @send_msg envelope, "", "#439FE0", str
 
   error: (envelope, strings...) ->
     for str in strings
-      @send envelope, "Oups, something bad happened...", "danger", str
+      @send_msg envelope, "Oups, something bad happened...", "danger", str
 
   success: (envelope, strings...) ->
     for str in strings
-      @send envelope, "", "good", str
+      @send_msg envelope, "", "good", str
 
   reply: (envelope, strings...) ->
     for str in strings
@@ -70,6 +49,26 @@ class Mattermost extends Adapter
     @icon = process.env.MATTERMOST_ICON_URL
     @username = process.env.MATTERMOST_HUBOT_USERNAME
     @selfsigned = this.getBool(process.env.MATTERMOST_SELFSIGNED_CERT) if process.env.MATTERMOST_SELFSIGNED_CERT
+    @send_msg: (envelope, title, color, strings...) ->
+      for str in strings
+        data = JSON.stringify({
+          icon_url: @icon,
+          channel: @channel ? envelope.user?.room ? envelope.room, # send back to source channel only if not overwritten,
+          username: @username,
+          text: "",
+          attachments: [{
+            fallback: title,
+            title: title,
+            text: str,
+            color: color,
+            mrkdwn_in: ['text', 'title']
+          }]
+        })
+        @robot.http(@url)
+          .header('Content-Type', 'application/json')
+          .post(data) (err, res, body) ->
+            if err
+              console.log err
     if @selfsigned then process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
     unless @tokens?
       @robot.logger.emergency "MATTERMOST_TOKEN is required"
